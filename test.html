@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+    <p><input type="button" value="Game Start" onclick="startGame();"></p>
+    <script>
+        let img = new Image();
+        let myCharacter;
+        function startGame() {
+            myGameArea.start();
+            myCharacter = setCharacter(img, 10, 10);
+            console.log(myCharacter.image.src);
+        }
+
+        let myGameArea = {
+            canvas : document.createElement('canvas'),
+            start : function () {
+                this.canvas.width = 1300;
+                this.canvas.height = 600;
+                this.canvas.style = 'border: 1px solid #c3c3c3';
+                this.context = this.canvas.getContext('2d');
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(updateGameArea, 20);
+            },
+            clear : function () {
+                this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
+            }
+        }
+
+        let setCharacter = function (image, x, y) {
+            this.x = x;
+            this.y = y;
+            this.image = image;
+            this.image.src = "Charizard (2).png";
+            myGameArea.context.drawImage(this.image, this.x, this.y, 160, 160);
+            this.update = function () {
+                this.image.src = "Charizard (2).png";
+                myGameArea.context.drawImage(this.image, this.x, this.y, 160, 160);
+            }
+        }
+
+        function updateGameArea() {
+            myGameArea.clear();
+            myCharacter.update();
+        }
+        // let canvas = document.getElementById("myCanvas");
+        // let context = canvas.getContext("2d");
+        // let img = new Image();
+        //
+        // function startGame() {
+        //     img.src = "Charizard (2).png";
+        //     context.drawImage(img, 10, 10,160,160);
+        // }
+    </script>
+</body>
+</html>

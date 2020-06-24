@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <style>
+        body {
+            background-image: url("Background_undersea_02.jpg");
+        }
+    </style>
+</head>
+<body onload="docReady()">
+<canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
+<img id="character" src="Gyarados_left_move.gif" style="position: absolute; left: 0; top: 0;border: 0px solid black"/>
+<script>
+    let canvas = document.getElementById('myCanvas');
+    let ctx = canvas.getContext('2d');
+    let character = document.getElementById('character');
+    let image = new Image();
+
+    function upArrowPressed() {
+        if (parseInt(character.style.top) >= 0) {
+            character.style.top = parseInt(character.style.top) - 20 + 'px';
+        }
+    }
+
+    function downArrowPressed() {
+        if (parseInt(character.style.top) < canvas.height - character.width)
+        character.style.top = parseInt(character.style.top) + 20 + 'px';
+    }
+
+    function leftArrowPressed() {
+        if (character.src.match('right')) {
+            character.src = 'Gyarados_left_move.gif';
+        }
+        if (parseInt(character.style.left) >= 0)
+        character.style.left = parseInt(character.style.left) - 20 + 'px';
+    }
+
+    function rightArrowPressed() {
+        if (character.src.match('left')) {
+            character.src = 'Gyarados_right_move.gif';
+        }
+        if (parseInt(character.style.left) < canvas.width - character.width)
+        character.style.left = parseInt(character.style.left) + 20 + 'px';
+    }
+
+    function aPressed() {
+        if (character.src.match('left')) {
+            character.src = 'Gyarados_left_roar.gif';
+            image.src="Energy_ball_1_left.png";
+            let x = parseInt(character.style.left) - 50;
+            let y = parseInt(character.style.top) + 95;
+            setTimeout(function () {
+                ctx.drawImage(image, x, y, 84, 58);
+                setInterval(function () {
+                    ctx.clearRect(x, y, 84, 58);
+                    x -= 30;
+                    if (x < 0) {
+                        ctx.clearRect(x, y, 84, 58);
+                    } else {
+                        ctx.drawImage(image, x, y, 84, 58);
+                    }
+                },50)
+            },680)
+            setTimeout(function () {
+                character.src = 'Gyarados_left_move.gif';
+            },1500);
+        } else {
+            character.src = 'Gyarados_right_roar.gif';
+            image.src="Energy_ball_1_right.png";
+            let x = parseInt(character.style.left) + 140;
+            let y = parseInt(character.style.top) + 95;
+            setTimeout(function () {
+                ctx.drawImage(image, x, y, 84, 58);
+                setInterval(function () {
+                    ctx.clearRect(x, y, 84, 58);
+                    x += 30;
+                    if (x > canvas.width) {
+                        ctx.clearRect(x, y, 84, 58);
+                    } else {
+                        ctx.drawImage(image, x, y, 84, 58);
+                    }
+                },50)
+            },680)
+
+            setTimeout(function () {
+                character.src = 'Gyarados_right_move.gif';
+            },1500);
+        }
+    }
+
+    function sPressed() {
+        if (character.src.match('left')) {
+            character.src = 'Gyarados_left_attack.gif';
+            setTimeout(function () {
+                character.src = 'Gyarados_left_move.gif';
+            },1500);
+        } else {
+            character.src = 'Gyarados_right_attack.gif';
+            setTimeout(function () {
+                character.src = 'Gyarados_right_move.gif';
+            },1500);
+        }
+    }
+
+    function moveSelection(evt) {
+        switch (evt.keyCode) {
+            case 37:
+                leftArrowPressed();
+                break;
+            case 38:
+                upArrowPressed();
+                break;
+            case 39:
+                rightArrowPressed();
+                break;
+            case 40:
+                downArrowPressed();
+                break;
+            case 65:
+                aPressed();
+                break;
+            case 83:
+                sPressed();
+                break;
+        }
+    }
+    function docReady() {
+        window.addEventListener('keydown', moveSelection);
+    }
+</script>
+</body>
+</html>
