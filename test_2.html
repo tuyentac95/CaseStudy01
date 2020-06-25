@@ -12,12 +12,14 @@
 <body onload="docReady()">
     <canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
     <img id="mainCharacter" src="" style="position: absolute;left: 0px; top: 0px;border: 1px solid black">
+    <img id="enemyBoss" src="" style="position: absolute;left: 1100px; top: 100px;border: 1px solid black">
     <p>
         <input type="button" value="Start Game" onclick="startGame();">
     </p>
     <script>
         function startGame() {
             gyarados.setSourceImage('Gyarados_right_move.gif');
+            lapras.setSourceImage('Lapras_left_move.gif');
         }
         function rightArrowPressed() {
             gyarados.goRight(20);
@@ -35,6 +37,7 @@
             gyarados.roar();
             creatBullet();
             gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
+            console.log(gyarados_bullet_image.width)
         }
         function sPressed() {
             gyarados.bite();
@@ -64,7 +67,7 @@
         function docReady() {
             window.addEventListener('keydown', moveSelection);
         }
-        let MainCharacter = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft,srcBiteRight,srcBiteLeft) {
+        let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft,srcBiteRight,srcBiteLeft) {
             let _thisRef = this;
             this.character = document.getElementById(id);
             this.x = parseInt(this.character.style.left);
@@ -166,7 +169,12 @@
                         setInterval(function () {
                             ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             _thisRef.x += 35;
-                            ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                            console.log(_thisRef.isHit(_thisRef.x, _thisRef.y))
+                            if (_thisRef >= canvas.width) {
+                                ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                            } else {
+                                ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                            }
                         }, 50)
                     }, 680)
 
@@ -184,8 +192,16 @@
                     }, 680)
                 }
             }
+            this.isHit = function (x, y) {
+                // let hitWidth = [x, x + this.width/2, x + this.width];
+                // let hitHeight = [y, y + this.height/2, y + this.height];
+                if (lapras.getLeft() < (x + this.width)) {
+                    return true;
+                }
+            }
         }
-        let gyarados = new MainCharacter('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
+        let gyarados = new Character('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
+        let lapras = new Character('enemyBoss','','Lapras_left_move.gif','','Lapras_left_roar.gif');
         let canvas = document.getElementById('myCanvas');
         let ctx = canvas.getContext('2d');
         let gyarados_bullet_array = [];
