@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Test 2</title>
+    <style>
+        body {
+            background-color: cornflowerblue;
+        }
+    </style>
 </head>
 <body onload="docReady()">
     <canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
@@ -28,6 +33,7 @@
         }
         function aPressed() {
             gyarados.roar();
+            gyarados_bullet.shoot();
         }
         function sPressed() {
             gyarados.bite();
@@ -62,6 +68,12 @@
             this.character = document.getElementById(id);
             this.x = parseInt(this.character.style.left);
             this.y = parseInt(this.character.style.top);
+            this.getLeft = function () {
+                return parseInt(this.character.style.left);
+            }
+            this.getTop = function () {
+                return parseInt(this.character.style.top);
+            }
             this.setSourceImage = function (src) {
                 this.character.src = src;
             }
@@ -139,9 +151,44 @@
                 }
             }
         }
+        let Bullet = function(object,shooter,srcGoRight,srcGoLeft) {
+            let _thisRef = this;
+            this.shooter = shooter;
+            this.image = object;
+            this.shoot = function () {
+                if (this.shooter.direction() === 'right') {
+                    this.image.src = srcGoRight;
+                    let x = this.shooter.getLeft()+140;
+                    let y = this.shooter.getTop()+95;
+                    setTimeout(function () {
+                        ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                        setInterval(function () {
+                            ctx.clearRect(x, y, 84, 58);
+                            x += 35;
+                            ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                        }, 50)
+                    }, 680)
+
+                } else {
+                    this.image.src = srcGoLeft;
+                    let x = this.shooter.getLeft()-50;
+                    let y = this.shooter.getTop()+95;
+                    setTimeout(function () {
+                        ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                        setInterval(function () {
+                            ctx.clearRect(x, y, 84, 58);
+                            x -= 35;
+                            ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                        }, 50)
+                    }, 680)
+                }
+            }
+        }
         let gyarados = new MainCharacter('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
         let canvas = document.getElementById('myCanvas');
         let ctx = canvas.getContext('2d');
+        let test_bullet = new Image();
+        let gyarados_bullet = new Bullet(test_bullet,gyarados,'Energy_ball_1_right.png','Energy_ball_1_left.png');
     </script>
 </body>
 </html>
