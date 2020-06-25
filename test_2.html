@@ -33,7 +33,8 @@
         }
         function aPressed() {
             gyarados.roar();
-            gyarados_bullet.shoot();
+            creatBullet();
+            gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
         }
         function sPressed() {
             gyarados.bite();
@@ -158,27 +159,27 @@
             this.shoot = function () {
                 if (this.shooter.direction() === 'right') {
                     this.image.src = srcGoRight;
-                    let x = this.shooter.getLeft()+140;
-                    let y = this.shooter.getTop()+95;
+                    this.x = this.shooter.getLeft()+140;
+                    this.y = this.shooter.getTop()+95;
                     setTimeout(function () {
-                        ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                        ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                         setInterval(function () {
-                            ctx.clearRect(x, y, 84, 58);
-                            x += 35;
-                            ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                            ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                            _thisRef.x += 35;
+                            ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                         }, 50)
                     }, 680)
 
                 } else {
                     this.image.src = srcGoLeft;
-                    let x = this.shooter.getLeft()-50;
-                    let y = this.shooter.getTop()+95;
+                    this.x = this.shooter.getLeft()-50;
+                    this.y = this.shooter.getTop()+95;
                     setTimeout(function () {
-                        ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                        ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                         setInterval(function () {
-                            ctx.clearRect(x, y, 84, 58);
-                            x -= 35;
-                            ctx.drawImage(_thisRef.image, x, y, 84, 58);
+                            ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                            _thisRef.x -= 35;
+                            ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                         }, 50)
                     }, 680)
                 }
@@ -187,8 +188,11 @@
         let gyarados = new MainCharacter('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
         let canvas = document.getElementById('myCanvas');
         let ctx = canvas.getContext('2d');
-        let test_bullet = new Image();
-        let gyarados_bullet = new Bullet(test_bullet,gyarados,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+        let gyarados_bullet_array = [];
+        let gyarados_bullet_image = new Image();
+        function creatBullet() {
+            gyarados_bullet_array[gyarados_bullet_array.length+1] = new Bullet(gyarados_bullet_image,gyarados,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+        }
     </script>
 </body>
 </html>
