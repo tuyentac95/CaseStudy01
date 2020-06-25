@@ -16,8 +16,33 @@
     let canvas = document.getElementById('myCanvas');
     let ctx = canvas.getContext('2d');
     let character = document.getElementById('character');
-    let image = new Image();
+    let bullet = new Image();
+    let razz = new Image();
+    razz.src = 'Berry_Razz.png'
+    let Berry = function (image) {
+        this.x = 500;
+        this.y = 300;
+        this.image = image;
+        this.appear = function () {
+            ctx.drawImage(this.image, this.x, this.y, 50, 50);
+        }
+        this.disappear = function () {
+            if (this.isEaten()) {
+                ctx.clearRect(this.x, this.y, 50, 50);
+            } else this.appear();
+        }
+        this.isEaten = function () {
+            if (((parseInt(character.style.left) + 110 <= this.x) && (parseInt(character.style.left) + 150 >= this.x))
+                && ((parseInt(character.style.top) + 75 <= this.y) && (parseInt(character.style.top) + 115 >= this.y)))
+            {
+                return true
+            } else return false;
+        }
+    }
+    let berryRazz = new Berry(razz);
+    berryRazz.appear();
 
+    console.log(berryRazz.image.src)
     function upArrowPressed() {
         if (parseInt(character.style.top) >= 0) {
             character.style.top = parseInt(character.style.top) - 20 + 'px';
@@ -48,18 +73,16 @@
     function aPressed() {
         if (character.src.match('left')) {
             character.src = 'Gyarados_left_roar.gif';
-            image.src="Energy_ball_1_left.png";
+            bullet.src="Energy_ball_1_left.png";
             let x = parseInt(character.style.left) - 50;
             let y = parseInt(character.style.top) + 95;
             setTimeout(function () {
-                ctx.drawImage(image, x, y, 84, 58);
+                ctx.drawImage(bullet, x, y, 84, 58);
                 setInterval(function () {
                     ctx.clearRect(x, y, 84, 58);
                     x -= 30;
-                    if (x < 0) {
-                        ctx.clearRect(x, y, 84, 58);
-                    } else {
-                        ctx.drawImage(image, x, y, 84, 58);
+                    if (x > 0) {
+                        ctx.drawImage(bullet, x, y, 84, 58);
                     }
                 },50)
             },680)
@@ -68,22 +91,20 @@
             },1500);
         } else {
             character.src = 'Gyarados_right_roar.gif';
-            image.src="Energy_ball_1_right.png";
+            bullet.src="Energy_ball_1_right.png";
             let x = parseInt(character.style.left) + 140;
             let y = parseInt(character.style.top) + 95;
             setTimeout(function () {
-                ctx.drawImage(image, x, y, 84, 58);
+                ctx.drawImage(bullet, x, y, 84, 58);
                 setInterval(function () {
                     ctx.clearRect(x, y, 84, 58);
+                    berryRazz.disappear();
                     x += 30;
-                    if (x > canvas.width) {
-                        ctx.clearRect(x, y, 84, 58);
-                    } else {
-                        ctx.drawImage(image, x, y, 84, 58);
+                    if (x < canvas.width) {
+                        ctx.drawImage(bullet, x, y, 84, 58);
                     }
                 },50)
             },680)
-
             setTimeout(function () {
                 character.src = 'Gyarados_right_move.gif';
             },1500);
@@ -92,12 +113,16 @@
 
     function sPressed() {
         if (character.src.match('left')) {
-            character.src = 'Gyarados_left_attack.gif';
+            character.src = 'Gyarados_left_bite.gif';
             setTimeout(function () {
                 character.src = 'Gyarados_left_move.gif';
             },1500);
         } else {
-            character.src = 'Gyarados_right_attack.gif';
+            character.src = 'Gyarados_right_bite.gif';
+            setTimeout(function () {
+                console.log(berryRazz.isEaten());
+                berryRazz.disappear();
+            }, 700);
             setTimeout(function () {
                 character.src = 'Gyarados_right_move.gif';
             },1500);

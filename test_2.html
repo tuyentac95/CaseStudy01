@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test 2</title>
+</head>
+<body onload="docReady()">
+    <canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
+    <img id="mainCharacter" src="" style="position: absolute;left: 0px; top: 0px;border: 1px solid black">
+    <p>
+        <input type="button" value="Start Game" onclick="startGame();">
+    </p>
+    <script>
+        function startGame() {
+            gyarados.setSourceImage('Gyarados_right_move.gif');
+        }
+        function rightArrowPressed() {
+            gyarados.goRight(20);
+        }
+        function leftArrowPressed() {
+            gyarados.goLeft(20);
+        }
+        function upArrowPressed() {
+            gyarados.goUp(20);
+        }
+        function downArrowPressed() {
+            gyarados.goDown(20);
+        }
+        function aPressed() {
+            gyarados.roar();
+        }
+        function sPressed() {
+            gyarados.bite();
+        }
+        function moveSelection(evt) {
+            switch (evt.keyCode) {
+                case 37:
+                    leftArrowPressed();
+                    break;
+                case 38:
+                    upArrowPressed();
+                    break;
+                case 39:
+                    rightArrowPressed();
+                    break;
+                case 40:
+                    downArrowPressed();
+                    break;
+                case 65:
+                    aPressed();
+                    break;
+                case 83:
+                    sPressed();
+                    break;
+            }
+        }
+        function docReady() {
+            window.addEventListener('keydown', moveSelection);
+        }
+        let MainCharacter = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft,srcBiteRight,srcBiteLeft) {
+            let _thisRef = this;
+            this.character = document.getElementById(id);
+            this.x = parseInt(this.character.style.left);
+            this.y = parseInt(this.character.style.top);
+            this.setSourceImage = function (src) {
+                this.character.src = src;
+            }
+            this.direction = function () {
+                if (this.character.src.match('right')) {
+                    return 'right';
+                } else return 'left';
+            }
+            this.getWidth = function () {
+                return this.character.width;
+            }
+            this.getHeight = function () {
+                return this.character.height;
+            }
+            this.setLeft = function () {
+                this.character.style.left = this.x + 'px';
+            }
+            this.setTop = function () {
+                this.character.style.top = this.y + 'px';
+            }
+            this.goRight = function (value) {
+                if (this.direction() === 'left') {
+                    this.character.src = srcGoRight;
+                }
+                if (this.x + this.getWidth() < canvas.width) {
+                    this.x += value;
+                    this.setLeft();
+                }
+            }
+            this.goLeft = function (value) {
+                if (this.direction() === 'right') {
+                    this.character.src = srcGoLeft;
+                }
+                if (this.x > 0) {
+                    this.x -= value;
+                    this.setLeft();
+                }
+            }
+            this.goUp = function (value) {
+                if (this.y > 0) {
+                    this.y -= value;
+                    this.setTop();
+                }
+            }
+            this.goDown = function (value) {
+                if (this.y + this.getHeight() < canvas.height) {
+                    this.y += value;
+                    this.setTop();
+                }
+            }
+            this.roar = function () {
+                if (this.direction() === 'right') {
+                    this.character.src = srcRoarRight;
+                    setTimeout(function () {
+                        _thisRef.character.src = srcGoRight;
+                    },1500)
+                } else {
+                    this.character.src = srcRoarLeft;
+                    setTimeout(function () {
+                        _thisRef.character.src = srcGoLeft;
+                    }, 1500);
+                }
+            }
+            this.bite = function () {
+                if (this.direction() === 'right') {
+                    this.character.src = srcBiteRight;
+                    setTimeout(function () {
+                        _thisRef.character.src = srcGoRight;
+                    },1500)
+                } else {
+                    this.character.src = srcBiteLeft;
+                    setTimeout(function () {
+                        _thisRef.character.src = srcGoLeft;
+                    }, 1500);
+                }
+            }
+        }
+        let gyarados = new MainCharacter('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
+        let canvas = document.getElementById('myCanvas');
+        let ctx = canvas.getContext('2d');
+    </script>
+</body>
+</html>
