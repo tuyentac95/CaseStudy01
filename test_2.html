@@ -12,7 +12,7 @@
 <body onload="docReady()">
     <canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
     <img id="mainCharacter" src="" style="position: absolute;left: 0px; top: 0px;border: 1px solid black">
-    <img id="enemyBoss" src="" style="position: absolute;left: 1100px; top: 100px;border: 1px solid black">
+    <img id="enemyBoss" src="" style="position: absolute;left: 1000px; top: 200px;border: 1px solid black">
     <p>
         <input type="button" value="Start Game" onclick="startGame();">
     </p>
@@ -20,6 +20,26 @@
         function startGame() {
             gyarados.setSourceImage('Gyarados_right_move.gif');
             lapras.setSourceImage('Lapras_left_move.gif');
+            lapras.setDirectionY('up');
+            // setInterval(function () {
+            //     if ((lapras.getTop() > 0) && (lapras.getDirectionY() === 'up')) {
+            //         lapras.goUp(1);
+            //     } else {
+            //         lapras.goDown(1);
+            //         lapras.setDirectionY('down');
+            //     }
+            //     if ((lapras.getTop() + lapras.getHeight() < canvas.height) && (lapras.getDirectionY() === 'down')) {
+            //         lapras.goDown(1);
+            //     } else {
+            //         lapras.goUp(1);
+            //         lapras.setDirectionY('up');
+            //     }
+            // }, 50);
+            setInterval(function () {
+                lapras.roar();
+                creatEnemyBullet();
+                lapras_bullet_array[lapras_bullet_array.length-1].shoot();
+            },4000);
         }
         function rightArrowPressed() {
             gyarados.goRight(20);
@@ -80,10 +100,16 @@
             this.setSourceImage = function (src) {
                 this.character.src = src;
             }
-            this.direction = function () {
+            this.directionX = function () {
                 if (this.character.src.match('right')) {
                     return 'right';
                 } else return 'left';
+            }
+            this.setDirectionY = function (direction) {
+                this.directionY = direction;
+            }
+            this.getDirectionY = function () {
+                return this.directionY;
             }
             this.getWidth = function () {
                 return this.character.width;
@@ -98,7 +124,7 @@
                 this.character.style.top = this.y + 'px';
             }
             this.goRight = function (value) {
-                if (this.direction() === 'left') {
+                if (this.directionX() === 'left') {
                     this.character.src = srcGoRight;
                 }
                 if (this.x + this.getWidth() < canvas.width) {
@@ -107,7 +133,7 @@
                 }
             }
             this.goLeft = function (value) {
-                if (this.direction() === 'right') {
+                if (this.directionX() === 'right') {
                     this.character.src = srcGoLeft;
                 }
                 if (this.x > 0) {
@@ -128,7 +154,7 @@
                 }
             }
             this.roar = function () {
-                if (this.direction() === 'right') {
+                if (this.directionX() === 'right') {
                     this.character.src = srcRoarRight;
                     setTimeout(function () {
                         _thisRef.character.src = srcGoRight;
@@ -141,7 +167,7 @@
                 }
             }
             this.bite = function () {
-                if (this.direction() === 'right') {
+                if (this.directionX() === 'right') {
                     this.character.src = srcBiteRight;
                     setTimeout(function () {
                         _thisRef.character.src = srcGoRight;
@@ -160,17 +186,18 @@
             this.image = object;
             this.enemy = enemy;
             this.shoot = function () {
-                if (this.shooter.direction() === 'right') {
+                if (this.shooter.directionX() === 'right') {
                     this.image.src = srcGoRight;
                     this.x = this.shooter.getLeft()+140;
-                    this.y = this.shooter.getTop()+95;
+                    this.y = this.shooter.getTop()+85;
                     setTimeout(function () {
                         ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
-                        setInterval(function () {
+                        let timerId = setInterval(function () {
                             ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             _thisRef.x += 35;
-                            if (_thisRef.isHit(_thisRef.x)) {
+                            if ((_thisRef.isHit(_thisRef.x,_thisRef.y)) || (_thisRef.x > canvas.width)){
                                 ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                                clearInterval(timerId);
                             } else {
                                 ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                             }
@@ -179,22 +206,29 @@
                 } else {
                     this.image.src = srcGoLeft;
                     this.x = this.shooter.getLeft()-50;
-                    this.y = this.shooter.getTop()+95;
+                    this.y = this.shooter.getTop()+85;
                     setTimeout(function () {
                         ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
-                        setInterval(function () {
+                        let timerId = setInterval(function () {
                             ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             _thisRef.x -= 35;
-                            ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                            if ((_thisRef.isHit(_thisRef.x,_thisRef.y)) || (_thisRef.x < 0)) {
+                                ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                                clearInterval(timerId);
+                            } else {
+                                ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                            }
                         }, 50)
                     }, 680)
                 }
             }
-            this.isHit = function (x) {
+            this.isHit = function (x,y) {
                 // let hitWidth = [x, x + this.width/2, x + this.width];
                 // let hitHeight = [y, y + this.height/2, y + this.height];
-                if (((this.enemy.getLeft() + this.enemy.getWidth()/2.9) < (x + this.image.width))
-                   && ((this.enemy.getLeft() + this.enemy.getWidth()/1.2) > (x + this.image.width)))
+                if (((this.enemy.getLeft() + 60/*this.enemy.getWidth()/2.9*/) < (x + this.image.width))
+                    && ((this.enemy.getLeft() + 120/*this.enemy.getWidth()/1*/) > (x + this.image.width))
+                    && ((this.enemy.getTop() + 90) < (y + this.image.height))
+                    && ((this.enemy.getTop() + 180) > (y + this.image.height)))
                 {
                     return true;
                 }
@@ -208,6 +242,11 @@
         let gyarados_bullet_image = new Image();
         function creatBullet() {
             gyarados_bullet_array[gyarados_bullet_array.length+1] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+        }
+        let lapras_bullet_array = [];
+        let lapras_bullet_image = new Image();
+        function creatEnemyBullet() {
+            lapras_bullet_array[gyarados_bullet_array.length+1] = new Bullet(lapras_bullet_image,lapras,gyarados,'Energy_ball_1_right.png','Energy_ball_1_left.png');
         }
     </script>
 </body>
