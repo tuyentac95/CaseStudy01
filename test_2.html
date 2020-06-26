@@ -19,26 +19,54 @@
     <script>
         function startGame() {
             gyarados.setSourceImage('Gyarados_right_move.gif');
+            gyarados.drawHPTab();
             lapras.setSourceImage('Lapras_left_move.gif');
-            lapras.setDirectionY('up');
-            // setInterval(function () {
-            //     if ((lapras.getTop() > 0) && (lapras.getDirectionY() === 'up')) {
-            //         lapras.goUp(1);
-            //     } else {
-            //         lapras.goDown(1);
-            //         lapras.setDirectionY('down');
-            //     }
-            //     if ((lapras.getTop() + lapras.getHeight() < canvas.height) && (lapras.getDirectionY() === 'down')) {
-            //         lapras.goDown(1);
-            //     } else {
-            //         lapras.goUp(1);
-            //         lapras.setDirectionY('up');
-            //     }
-            // }, 50);
-            setInterval(function () {
+            let time = 0;
+            let TimeId = setInterval(function () {
+                if (time < 100) {
+                    lapras.goUp(2);
+                    time++;
+                }
+                if ((time < 400) && (time >= 100)) {
+                    lapras.goLeft(3);
+                    time++;
+                }
+                if ((time >= 400) && (time < 800)) {
+                    lapras.goRight(0);
+                    lapras.goDown(2);
+                    time++;
+                }
+                if ((time >= 800) && (time < 1100)) {
+                    lapras.goRight(3);
+                    time++;
+                }
+                if ((time >= 1100) && (time < 1400)) {
+                    lapras.goLeft(0);
+                    lapras.goUp(2);
+                    time++;
+                }
+                if (time >= 1400) {
+                    time = 0;
+                }
+                if (gyarados.isKnocked()) {
+                    alert('Game Over');
+                    clearInterval(TimeId);
+                } else if (lapras.isKnocked()) {
+                    alert('You Win');
+                    clearInterval(TimeId);
+                }
+            }, 50)
+            let TimeId2 = setInterval(function () {
                 lapras.roar();
                 creatEnemyBullet();
                 lapras_bullet_array[lapras_bullet_array.length-1].shoot();
+                console.log(lapras.getHP());
+                console.log(gyarados.getHP());
+                if (gyarados.isKnocked()) {
+                    clearInterval(TimeId);
+                } else if (lapras.isKnocked()) {
+                    clearInterval(TimeId);
+                }
             },4000);
         }
         function rightArrowPressed() {
@@ -91,6 +119,32 @@
             this.character = document.getElementById(id);
             this.x = parseInt(this.character.style.left);
             this.y = parseInt(this.character.style.top);
+            this.setHP = function (HP) {
+                this.HP = HP;
+            }
+            this.getHP = function () {
+                return this.HP;
+            }
+            this.decreaseHP = function () {
+                if (this.getHP() > 0) {
+                    this.HP -= 10;
+                    this.drawHPTab();
+                }
+            }
+            this.isKnocked = function () {
+                if (this.getHP() > 0) {
+                    return false;
+                } else return true;
+            }
+            this.setHPPosition = function (x, y) {
+                this.HPPositionX = x;
+                this.HPPositionY = y;
+            }
+            this.drawHPTab = function () {
+                ctx.clearRect(this.HPPositionX, this.HPPositionY,5*(this.getHP()+10),15)
+                ctx.fillStyle = 'red';
+                ctx.fillRect(this.HPPositionX, this.HPPositionY,5*this.getHP(),15);
+            }
             this.getLeft = function () {
                 return parseInt(this.character.style.left);
             }
@@ -104,12 +158,6 @@
                 if (this.character.src.match('right')) {
                     return 'right';
                 } else return 'left';
-            }
-            this.setDirectionY = function (direction) {
-                this.directionY = direction;
-            }
-            this.getDirectionY = function () {
-                return this.directionY;
             }
             this.getWidth = function () {
                 return this.character.width;
@@ -195,7 +243,8 @@
                         let timerId = setInterval(function () {
                             ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             _thisRef.x += 35;
-                            if ((_thisRef.isHit(_thisRef.x,_thisRef.y)) || (_thisRef.x > canvas.width)){
+                            if (_thisRef.isHit()) {_thisRef.enemy.decreaseHP();}
+                            if ((_thisRef.isHit()) || (_thisRef.x > canvas.width)){
                                 ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                                 clearInterval(timerId);
                             } else {
@@ -212,7 +261,8 @@
                         let timerId = setInterval(function () {
                             ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             _thisRef.x -= 35;
-                            if ((_thisRef.isHit(_thisRef.x,_thisRef.y)) || (_thisRef.x < 0)) {
+                            if (_thisRef.isHit()) {_thisRef.enemy.decreaseHP();}
+                            if ((_thisRef.isHit()) || (_thisRef.x < 0)) {
                                 ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                                 clearInterval(timerId);
                             } else {
@@ -222,31 +272,33 @@
                     }, 680)
                 }
             }
-            this.isHit = function (x,y) {
-                // let hitWidth = [x, x + this.width/2, x + this.width];
-                // let hitHeight = [y, y + this.height/2, y + this.height];
-                if (((this.enemy.getLeft() + 60/*this.enemy.getWidth()/2.9*/) < (x + this.image.width))
-                    && ((this.enemy.getLeft() + 120/*this.enemy.getWidth()/1*/) > (x + this.image.width))
-                    && ((this.enemy.getTop() + 90) < (y + this.image.height))
-                    && ((this.enemy.getTop() + 180) > (y + this.image.height)))
+            this.isHit = function () {
+                if (((this.enemy.getLeft() + 60/*this.enemy.getWidth()/2.9*/) < (this.x + this.image.width))
+                    && ((this.enemy.getLeft() + 120/*this.enemy.getWidth()/1*/) > (this.x + this.image.width))
+                    && ((this.enemy.getTop() + 90) < (this.y + this.image.height))
+                    && ((this.enemy.getTop() + 180) > (this.y + this.image.height)))
                 {
                     return true;
                 }
             }
         }
         let gyarados = new Character('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
-        let lapras = new Character('enemyBoss','','Lapras_left_move.gif','','Lapras_left_roar.gif');
+        gyarados.setHP(100);
+        gyarados.setHPPosition(20, 10);
+        let lapras = new Character('enemyBoss','Lapras_right_move.gif','Lapras_left_move.gif','Lapras_right_roar.gif','Lapras_left_roar.gif');
+        lapras.setHP(1000);
+        // lapras.setHPPosition(500, )
         let canvas = document.getElementById('myCanvas');
         let ctx = canvas.getContext('2d');
         let gyarados_bullet_array = [];
         let gyarados_bullet_image = new Image();
         function creatBullet() {
-            gyarados_bullet_array[gyarados_bullet_array.length+1] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+            gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
         }
         let lapras_bullet_array = [];
         let lapras_bullet_image = new Image();
         function creatEnemyBullet() {
-            lapras_bullet_array[gyarados_bullet_array.length+1] = new Bullet(lapras_bullet_image,lapras,gyarados,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+            lapras_bullet_array[lapras_bullet_array.length] = new Bullet(lapras_bullet_image,lapras,gyarados,'Energy_ball_1_right.png','Ice_ball_1_left.png');
         }
     </script>
 </body>

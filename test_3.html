@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test 3</title>
+    <style>
+        body {
+            background-color: cornflowerblue;
+        }
+    </style>
+</head>
+<body onload="docReady()">
+<canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
+<img id="mainCharacter" src="" style="position: absolute;left: 0px; top: 0px;border: 1px solid black">
+<img id="enemyBoss" src="" style="position: absolute;left: 1000px; top: 200px;border: 1px solid black">
+<p>
+    <input type="button" value="Start Game" onclick="startGame();">
+</p>
+<script>
+    function startGame() {
+        gyarados.setSourceImage('Gyarados_right_move.gif');
+        lapras.setSourceImage('Lapras_left_move.gif');
+        lapras.setDirectionY('up');
+        // setInterval(function () {
+        //     if ((lapras.getTop() > 0) && (lapras.getDirectionY() === 'up')) {
+        //         lapras.goUp(1);
+        //     } else {
+        //         lapras.goDown(1);
+        //         lapras.setDirectionY('down');
+        //     }
+        //     if ((lapras.getTop() + lapras.getHeight() < canvas.height) && (lapras.getDirectionY() === 'down')) {
+        //         lapras.goDown(1);
+        //     } else {
+        //         lapras.goUp(1);
+        //         lapras.setDirectionY('up');
+        //     }
+        // }, 50);
+        setInterval(function () {
+            lapras.roar();
+            creatEnemyBullet();
+            lapras_bullet_array[lapras_bullet_array.length-1].shoot();
+        },4000);
+    }
+    function rightArrowPressed() {
+        gyarados.goRight(20);
+    }
+    function leftArrowPressed() {
+        gyarados.goLeft(20);
+    }
+    function upArrowPressed() {
+        gyarados.goUp(20);
+    }
+    function downArrowPressed() {
+        gyarados.goDown(20);
+    }
+    function aPressed() {
+        gyarados.roar();
+        creatBullet();
+        gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
+    }
+    function sPressed() {
+        gyarados.bite();
+    }
+    function moveSelection(evt) {
+        switch (evt.keyCode) {
+            case 37:
+                leftArrowPressed();
+                break;
+            case 38:
+                upArrowPressed();
+                break;
+            case 39:
+                rightArrowPressed();
+                break;
+            case 40:
+                downArrowPressed();
+                break;
+            case 65:
+                aPressed();
+                break;
+            case 83:
+                sPressed();
+                break;
+        }
+    }
+    function docReady() {
+        window.addEventListener('keydown', moveSelection);
+    }
+    let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft,srcBiteRight,srcBiteLeft) {
+        let _thisRef = this;
+        this.character = document.getElementById(id);
+        this.x = parseInt(this.character.style.left);
+        this.y = parseInt(this.character.style.top);
+        this.getLeft = function () {
+            return parseInt(this.character.style.left);
+        }
+        this.getTop = function () {
+            return parseInt(this.character.style.top);
+        }
+        this.setSourceImage = function (src) {
+            this.character.src = src;
+        }
+        this.directionX = function () {
+            if (this.character.src.match('right')) {
+                return 'right';
+            } else return 'left';
+        }
+        this.setDirectionY = function (direction) {
+            this.directionY = direction;
+        }
+        this.getDirectionY = function () {
+            return this.directionY;
+        }
+        this.getWidth = function () {
+            return this.character.width;
+        }
+        this.getHeight = function () {
+            return this.character.height;
+        }
+        this.setLeft = function () {
+            this.character.style.left = this.x + 'px';
+        }
+        this.setTop = function () {
+            this.character.style.top = this.y + 'px';
+        }
+        this.goRight = function (value) {
+            if (this.directionX() === 'left') {
+                this.character.src = srcGoRight;
+            }
+            if (this.x + this.getWidth() < canvas.width) {
+                this.x += value;
+                this.setLeft();
+            }
+        }
+        this.goLeft = function (value) {
+            if (this.directionX() === 'right') {
+                this.character.src = srcGoLeft;
+            }
+            if (this.x > 0) {
+                this.x -= value;
+                this.setLeft();
+            }
+        }
+        this.goUp = function (value) {
+            if (this.y > 0) {
+                this.y -= value;
+                this.setTop();
+            }
+        }
+        this.goDown = function (value) {
+            if (this.y + this.getHeight() < canvas.height) {
+                this.y += value;
+                this.setTop();
+            }
+        }
+        this.roar = function () {
+            if (this.directionX() === 'right') {
+                this.character.src = srcRoarRight;
+                setTimeout(function () {
+                    _thisRef.character.src = srcGoRight;
+                },1500)
+            } else {
+                this.character.src = srcRoarLeft;
+                setTimeout(function () {
+                    _thisRef.character.src = srcGoLeft;
+                }, 1500);
+            }
+        }
+        this.bite = function () {
+            if (this.directionX() === 'right') {
+                this.character.src = srcBiteRight;
+                setTimeout(function () {
+                    _thisRef.character.src = srcGoRight;
+                },1500)
+            } else {
+                this.character.src = srcBiteLeft;
+                setTimeout(function () {
+                    _thisRef.character.src = srcGoLeft;
+                }, 1500);
+            }
+        }
+    }
+    let Bullet = function(object,shooter,enemy,srcGoRight,srcGoLeft) {
+        let _thisRef = this;
+        this.shooter = shooter;
+        this.image = object;
+        this.enemy = enemy;
+        this.shoot = function () {
+            if (this.shooter.directionX() === 'right') {
+                this.image.src = srcGoRight;
+                this.x = this.shooter.getLeft()+140;
+                this.y = this.shooter.getTop()+85;
+                setTimeout(function () {
+                    ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                    let timerId = setInterval(function () {
+                        ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                        _thisRef.x += 35;
+                        if ((_thisRef.isHit(_thisRef.x,_thisRef.y)) || (_thisRef.x > canvas.width)){
+                            ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                            clearInterval(timerId);
+                        } else {
+                            ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                        }
+                    }, 50)
+                }, 680)
+            } else {
+                this.image.src = srcGoLeft;
+                this.x = this.shooter.getLeft()-50;
+                this.y = this.shooter.getTop()+85;
+                setTimeout(function () {
+                    ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                    let timerId = setInterval(function () {
+                        ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                        _thisRef.x -= 35;
+                        if ((_thisRef.isHit(_thisRef.x,_thisRef.y)) || (_thisRef.x < 0)) {
+                            ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
+                            clearInterval(timerId);
+                        } else {
+                            ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
+                        }
+                    }, 50)
+                }, 680)
+            }
+        }
+        this.isHit = function (x,y) {
+            // let hitWidth = [x, x + this.width/2, x + this.width];
+            // let hitHeight = [y, y + this.height/2, y + this.height];
+            if (((this.enemy.getLeft() + 60/*this.enemy.getWidth()/2.9*/) < (x + this.image.width))
+                && ((this.enemy.getLeft() + 120/*this.enemy.getWidth()/1*/) > (x + this.image.width))
+                && ((this.enemy.getTop() + 90) < (y + this.image.height))
+                && ((this.enemy.getTop() + 180) > (y + this.image.height)))
+            {
+                return true;
+            }
+        }
+    }
+    let gyarados = new Character('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
+    let lapras = new Character('enemyBoss','','Lapras_left_move.gif','','Lapras_left_roar.gif');
+    let canvas = document.getElementById('myCanvas');
+    let ctx = canvas.getContext('2d');
+    let gyarados_bullet_array = [];
+    let gyarados_bullet_image = new Image();
+    function creatBullet() {
+        gyarados_bullet_array[gyarados_bullet_array.length+1] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+    }
+    let lapras_bullet_array = [];
+    let lapras_bullet_image = new Image();
+    function creatEnemyBullet() {
+        lapras_bullet_array[lapras_bullet_array.length+1] = new Bullet(lapras_bullet_image,lapras,gyarados,'Energy_ball_1_right.png','Ice_ball_1_left.png');
+    }
+</script>
+</body>
+</html>
