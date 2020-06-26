@@ -37,7 +37,6 @@
             gyarados.roar();
             creatBullet();
             gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
-            console.log(gyarados_bullet_image.width)
         }
         function sPressed() {
             gyarados.bite();
@@ -155,10 +154,11 @@
                 }
             }
         }
-        let Bullet = function(object,shooter,srcGoRight,srcGoLeft) {
+        let Bullet = function(object,shooter,enemy,srcGoRight,srcGoLeft) {
             let _thisRef = this;
             this.shooter = shooter;
             this.image = object;
+            this.enemy = enemy;
             this.shoot = function () {
                 if (this.shooter.direction() === 'right') {
                     this.image.src = srcGoRight;
@@ -169,15 +169,13 @@
                         setInterval(function () {
                             ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             _thisRef.x += 35;
-                            console.log(_thisRef.isHit(_thisRef.x, _thisRef.y))
-                            if (_thisRef >= canvas.width) {
+                            if (_thisRef.isHit(_thisRef.x)) {
                                 ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
                             } else {
                                 ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                             }
                         }, 50)
                     }, 680)
-
                 } else {
                     this.image.src = srcGoLeft;
                     this.x = this.shooter.getLeft()-50;
@@ -192,10 +190,12 @@
                     }, 680)
                 }
             }
-            this.isHit = function (x, y) {
+            this.isHit = function (x) {
                 // let hitWidth = [x, x + this.width/2, x + this.width];
                 // let hitHeight = [y, y + this.height/2, y + this.height];
-                if (lapras.getLeft() < (x + this.width)) {
+                if (((this.enemy.getLeft() + this.enemy.getWidth()/2.9) < (x + this.image.width))
+                   && ((this.enemy.getLeft() + this.enemy.getWidth()/1.2) > (x + this.image.width)))
+                {
                     return true;
                 }
             }
@@ -207,7 +207,7 @@
         let gyarados_bullet_array = [];
         let gyarados_bullet_image = new Image();
         function creatBullet() {
-            gyarados_bullet_array[gyarados_bullet_array.length+1] = new Bullet(gyarados_bullet_image,gyarados,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+            gyarados_bullet_array[gyarados_bullet_array.length+1] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
         }
     </script>
 </body>
