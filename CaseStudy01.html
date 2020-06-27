@@ -11,7 +11,7 @@
 </head>
 <body onload="docReady()">
     <canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
-    <img id="mainCharacter" src="" style="position: absolute;left: 0px; top: 0px;">
+    <img id="mainCharacter" src="" style="position: absolute;left: 50px; top: 200px;">
     <img id="enemyBoss" src="" style="position: absolute;left: 1000px; top: 200px;">
     <p>
         <input type="button" value="Start Game" onclick="startGame();">
@@ -20,8 +20,10 @@
         function startGame() {
             gyarados.setSourceImage('Gyarados_right_move.gif');
             lapras.setSourceImage('Lapras_left_move.gif');
+            createRazz();
+            razz_array[razz_array.length-1].appear();
             let time = 0;
-            let TimeId = setInterval(function () {
+            let LaprasMovement = setInterval(function () {
                 if (time < 100) {
                     lapras.goUp(2);
                     time++;
@@ -47,29 +49,45 @@
                 if (time >= 1400) {
                     time = 0;
                 }
-            }, 50)
-            let TimeId2 = setInterval(function () {
+            }, 50);
+            let LaprasAttack = setInterval(function () {
                 lapras.roar();
-                creatEnemyBullet();
+                createEnemyBullet();
                 lapras_bullet_array[lapras_bullet_array.length-1].shoot();
-                console.log(lapras.getHP());
-                console.log(gyarados.getHP());
-            },4000);
-            let TimeId3 = setInterval(function () {
+            },3000);
+            let CreateRazz = setInterval(function () {
+                createRazz();
+                razz_array[razz_array.length-1].appear();
+            }, 5000);
+            let CheckRazz = setInterval(function () {
+                for (let i=0; i < razz_array.length; i++) {
+                    console.log(razz_array[i].status)
+                    if (razz_array[i].status !== 'eaten') {
+                        razz_array[i].appear();
+                        razz_array[i].berryEaten(gyarados);
+                    }
+                }
+            },5)
+            let TimeId = setInterval(function () {
                 gyarados.drawHPBar();
+                gyarados.drawEnergyBar();
                 lapras.drawHPBar();
                 if (gyarados.isKnocked()) {
                     alert('Game Over');
+                    clearInterval(LaprasMovement);
+                    clearInterval(LaprasAttack);
+                    clearInterval(CreateRazz);
+                    clearInterval(CheckRazz);
                     clearInterval(TimeId);
-                    clearInterval(TimeId2);
-                    clearInterval(TimeId3);
                 } else if (lapras.isKnocked()) {
                     alert('You Win');
+                    clearInterval(LaprasMovement);
+                    clearInterval(LaprasAttack);
+                    clearInterval(CreateRazz);
+                    clearInterval(CheckRazz);
                     clearInterval(TimeId);
-                    clearInterval(TimeId2);
-                    clearInterval(TimeId3);
                 }
-            },5)
+            },5);
         }
         function rightArrowPressed() {
             gyarados.goRight(20);
@@ -85,8 +103,11 @@
         }
         function aPressed() {
             gyarados.roar();
-            creatBullet();
-            gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
+            if (gyarados.getEnergy() > 0) {
+                createBullet();
+                gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
+                gyarados.decreaseEnergy();
+            }
         }
         function sPressed() {
             gyarados.bite();
@@ -123,6 +144,7 @@
             this.y = parseInt(this.character.style.top);
             this.setHP = function (HP) {
                 this.HP = HP;
+                this.maxHP = HP;
             }
             this.getHP = function () {
                 return this.HP;
@@ -143,11 +165,36 @@
                 this.HPPositionY = y;
             }
             this.drawHPBar = function () {
-                ctx.clearRect(this.HPPositionX, this.HPPositionY,20,-1.5*(this.getHP()+10));
-                if (this.HP < 40) {
+                ctx.clearRect(this.HPPositionX, this.HPPositionY,20,-2.5*(this.getHP()+10));
+                if (this.HP < 0.5*this.maxHP) {
                     ctx.fillStyle = 'red';
                 } else {ctx.fillStyle = 'green';}
-                ctx.fillRect(this.HPPositionX, this.HPPositionY,20,-1.5*this.getHP());
+                ctx.fillRect(this.HPPositionX, this.HPPositionY,20,-2.5*this.getHP());
+            }
+            this.setEnergy = function (energy) {
+                this.energy = energy;
+            }
+            this.getEnergy = function () {
+                return this.energy;
+            }
+            this.increaseEnergy = function () {
+                if (this.getEnergy() < 100) {
+                    this.energy += 10;
+                    this.drawEnergyBar();
+                }
+            }
+            this.decreaseEnergy = function () {
+                if (this.getEnergy() > 0) {
+                    this.energy -= 10;
+                    this.drawEnergyBar();
+                }
+            }
+            this.drawEnergyBar = function () {
+                this.EnergyPositionX = this.HPPositionX + 30;
+                this.EnergyPositionY = this.HPPositionY;
+                ctx.clearRect(this.EnergyPositionX, this.EnergyPositionY, 20, -2.5*(this.energy + 10));
+                ctx.fillStyle = 'yellow';
+                ctx.fillRect(this.EnergyPositionX, this.EnergyPositionY, 20, -2.5*this.energy);
             }
             this.getLeft = function () {
                 return parseInt(this.character.style.left);
@@ -232,6 +279,39 @@
                 }
             }
         }
+        let Berry = function(object,srcImage) {
+            this.image = object;
+            this.image.src = srcImage;
+            this.status = '';
+            this.x = Math.floor(Math.random()*(canvas.width -200)) + 100;
+            this.y = Math.floor(Math.random()*(canvas.height -200)) + 100;
+            this.getLeft = function () {
+                return this.x;
+            }
+            this.getTop = function () {
+                return this.y;
+            }
+            this.appear = function () {
+                ctx.drawImage(this.image, this.x, this.y, 50, 50);
+            }
+            this.disappear = function () {
+                ctx.clearRect(this.x, this.y, 50, 50);
+            }
+            this.isEaten = function (eater) {
+                return (eater.getLeft() + 20 <= this.getLeft()) && (eater.getLeft() + eater.getWidth() >= this.getLeft() + 50)
+                    && (eater.getTop() + 20 <= this.getTop()) && (eater.getTop() + eater.getHeight() >= this.getTop() + 50);
+            }
+            this.setStatus = function (status) {
+                this.status = status;
+            }
+            this.berryEaten = function (eater) {
+                if (this.isEaten(eater)) {
+                    this.disappear();
+                    this.setStatus('eaten');
+                    eater.increaseEnergy();
+                }
+            }
+        }
         let Bullet = function(object,shooter,enemy,srcGoRight,srcGoLeft) {
             let _thisRef = this;
             this.shooter = shooter;
@@ -277,8 +357,8 @@
                 }
             }
             this.isHit = function () {
-                if (((this.enemy.getLeft() + 60/*this.enemy.getWidth()/2.9*/) < (this.x + this.image.width))
-                    && ((this.enemy.getLeft() + 120/*this.enemy.getWidth()/1*/) > (this.x + this.image.width))
+                if (((this.enemy.getLeft() + 60) < (this.x + this.image.width))
+                    && ((this.enemy.getLeft() + 120) > (this.x + this.image.width))
                     && ((this.enemy.getTop() + 90) < (this.y + this.image.height))
                     && ((this.enemy.getTop() + 180) > (this.y + this.image.height)))
                 {
@@ -289,20 +369,26 @@
         let gyarados = new Character('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif','Gyarados_right_bite.gif','Gyarados_left_bite.gif');
         gyarados.setHP(100);
         gyarados.setHPPosition(20, 580);
+        gyarados.setEnergy(20);
         let lapras = new Character('enemyBoss','Lapras_right_move.gif','Lapras_left_move.gif','Lapras_right_roar.gif','Lapras_left_roar.gif');
-        lapras.setHP(300);
+        lapras.setHP(200);
         lapras.setHPPosition(1250, 580);
         let canvas = document.getElementById('myCanvas');
         let ctx = canvas.getContext('2d');
         let gyarados_bullet_array = [];
         let gyarados_bullet_image = new Image();
-        function creatBullet() {
+        function createBullet() {
             gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
         }
         let lapras_bullet_array = [];
         let lapras_bullet_image = new Image();
-        function creatEnemyBullet() {
+        function createEnemyBullet() {
             lapras_bullet_array[lapras_bullet_array.length] = new Bullet(lapras_bullet_image,lapras,gyarados,'Ice_ball_1_right.png','Ice_ball_1_left.png');
+        }
+        let razz_array = [];
+        let razz_image = new Image()
+        function createRazz() {
+            razz_array[razz_array.length] = new Berry(razz_image, 'Berry_Razz.png');
         }
     </script>
 </body>
