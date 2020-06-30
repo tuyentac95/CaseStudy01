@@ -138,3 +138,7 @@ function howToPlay() {
     alert('P2: Press A S D W to move. Press H to shoot');
     alert('Eat berry to get more energy');
 }
+
+function reStart() {
+    window.location.reload();
+}
