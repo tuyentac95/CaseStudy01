@@ -5,14 +5,14 @@
     <title>Cuộc chiến đại dương</title>
     <style>
         body {
-            background-image: url("Background_undersea.jpg");
+            background-image: url("Image/Background_undersea.jpg");
         }
     </style>
-    <script src="Character.js"></script>
-    <script src="Bullet.js"></script>
-    <script src="Berry.js"></script>
-    <script src="KeyControl.js"></script>
-    <script src="StartGame.js"></script>
+    <script src="JS/Character.js"></script>
+    <script src="JS/Bullet.js"></script>
+    <script src="JS/Berry.js"></script>
+    <script src="JS/KeyControl.js"></script>
+    <script src="JS/StartGame.js"></script>
 </head>
 <body>
     <canvas id="myCanvas" width="1300" height="600" style="border: 1px solid #c3c3c3"></canvas>
@@ -27,26 +27,25 @@
     let canvas = document.getElementById('myCanvas');
     let ctx = canvas.getContext('2d');
 
-    let gyarados = new Character('mainCharacter','Gyarados_right_move.gif','Gyarados_left_move.gif','Gyarados_right_roar.gif','Gyarados_left_roar.gif');
+    let gyarados = new Character('mainCharacter','Image/Gyarados_right_move.gif','Image/Gyarados_left_move.gif','Image/Gyarados_right_roar.gif','Image/Gyarados_left_roar.gif');
     let gyarados_bullet_array = [];
     let gyarados_bullet_image = new Image();
     function createBullet() {
-        gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Energy_ball_1_right.png','Energy_ball_1_left.png');
+        gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Image/Energy_ball_1_right.png','Image/Energy_ball_1_left.png');
     }
 
-    let lapras = new Character('enemyBoss','Lapras_right_move.gif','Lapras_left_move.gif','Lapras_right_roar.gif','Lapras_left_roar.gif');
+    let lapras = new Character('enemyBoss','Image/Lapras_right_move.gif','Image/Lapras_left_move.gif','Image/Lapras_right_roar.gif','Image/Lapras_left_roar.gif');
     let lapras_bullet_array = [];
     let lapras_bullet_image = new Image();
     function createEnemyBullet() {
-        lapras_bullet_array[lapras_bullet_array.length] = new Bullet(lapras_bullet_image,lapras,gyarados,'Ice_ball_1_right.png','Ice_ball_1_left.png');
+        lapras_bullet_array[lapras_bullet_array.length] = new Bullet(lapras_bullet_image,lapras,gyarados,'Image/Ice_ball_1_right.png','Image/Ice_ball_1_left.png');
     }
 
     let razz_array = [];
     let razz_image = new Image()
     function createRazz() {
-        razz_array[razz_array.length] = new Berry(razz_image, 'Berry_Razz.png');
+        razz_array[razz_array.length] = new Berry(razz_image, 'Image/Berry_Razz.png');
     }
-
 </script>
 </body>
 </html>

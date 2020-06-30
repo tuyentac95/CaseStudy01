@@ -1,16 +1,17 @@
 function startGamePvP() {
     window.addEventListener('keydown', moveSelectionP1);
     window.addEventListener('keydown', moveSelectionP2);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    gyarados.setSourceImage('Gyarados_right_move.gif');
+    gyarados.setSourceImage('Image/Gyarados_right_move.gif');
     gyarados.setHP(200);
     gyarados.setHPPosition(20, 580);
     gyarados.setEnergy(50);
 
-    lapras.setSourceImage('Lapras_left_move.gif');
+    lapras.setSourceImage('Image/Lapras_left_move.gif');
     lapras.setHP(200);
     lapras.setHPPosition(1230, 580);
-    lapras.setEnergy(50)
+    lapras.setEnergy(50);
 
     createRazz();
     razz_array[razz_array.length-1].appear();
@@ -22,7 +23,6 @@ function startGamePvP() {
 
     let CheckRazz = setInterval(function () {
         for (let i=0; i < razz_array.length; i++) {
-            console.log(razz_array[i].status)
             if (razz_array[i].status !== 'eaten') {
                 razz_array[i].appear();
                 razz_array[i].berryEaten(gyarados);
@@ -52,13 +52,14 @@ function startGamePvP() {
 
 function startGame() {
     window.addEventListener('keydown', moveSelectionP1);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    gyarados.setSourceImage('Gyarados_right_move.gif');
+    gyarados.setSourceImage('Image/Gyarados_right_move.gif');
     gyarados.setHP(100);
     gyarados.setHPPosition(20, 580);
     gyarados.setEnergy(30);
 
-    lapras.setSourceImage('Lapras_left_move.gif');
+    lapras.setSourceImage('Image/Lapras_left_move.gif');
     lapras.setHP(200);
     lapras.setHPPosition(1260, 580);
 
@@ -69,26 +70,22 @@ function startGame() {
     let LaprasMovement = setInterval(function () {
         if (time < 100) {
             lapras.goUp(2);
-            time++;
         }
         if ((time < 400) && (time >= 100)) {
             lapras.goLeft(3);
-            time++;
         }
         if ((time >= 400) && (time < 800)) {
             lapras.goRight(0);
             lapras.goDown(2);
-            time++;
         }
         if ((time >= 800) && (time < 1100)) {
             lapras.goRight(3);
-            time++;
         }
         if ((time >= 1100) && (time < 1400)) {
             lapras.goLeft(0);
             lapras.goUp(2);
-            time++;
         }
+        time++;
         if (time >= 1400) {
             time = 0;
         }
@@ -107,7 +104,6 @@ function startGame() {
 
     let CheckRazz = setInterval(function () {
         for (let i=0; i < razz_array.length; i++) {
-            console.log(razz_array[i].status)
             if (razz_array[i].status !== 'eaten') {
                 razz_array[i].appear();
                 razz_array[i].berryEaten(gyarados);
