@@ -29,7 +29,7 @@ function startGamePvP() {
                 razz_array[i].berryEaten(lapras);
             }
         }
-    },5)
+    },25)
 
     let TimeId = setInterval(function () {
         gyarados.drawHPBar();
@@ -47,7 +47,7 @@ function startGamePvP() {
             clearInterval(CheckRazz);
             clearInterval(TimeId);
         }
-    },5);
+    },25);
 }
 
 function startGame() {
@@ -109,7 +109,7 @@ function startGame() {
                 razz_array[i].berryEaten(gyarados);
             }
         }
-    },5)
+    },25)
 
     let TimeId = setInterval(function () {
         gyarados.drawHPBar();
@@ -130,7 +130,7 @@ function startGame() {
             clearInterval(CheckRazz);
             clearInterval(TimeId);
         }
-    },5);
+    },25);
 }
 
 function howToPlay() {

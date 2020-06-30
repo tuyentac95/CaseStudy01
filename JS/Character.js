@@ -28,7 +28,9 @@ let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft) {
         this.HPPositionY = y;
     }
     this.drawHPBar = function () {
-        ctx.clearRect(this.HPPositionX, this.HPPositionY,20,-2.5*(this.getHP()+10));
+        ctx.rect(this.HPPositionX-1, this.HPPositionY+1, 22, -2.5*(this.maxHP+0.5));
+        ctx.stroke();
+        ctx.clearRect(this.HPPositionX, this.HPPositionY,20,-2.5*(this.maxHP));
         if (this.HP < 0.5*this.maxHP) {
             ctx.fillStyle = 'red';
         } else {ctx.fillStyle = 'green';}
@@ -36,6 +38,7 @@ let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft) {
     }
 
     // Energy setting
+    this.maxEnergy = 100;
     this.setEnergy = function (energy) {
         this.energy = energy;
     }
@@ -43,7 +46,7 @@ let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft) {
         return this.energy;
     }
     this.increaseEnergy = function () {
-        if (this.getEnergy() < 100) {
+        if (this.getEnergy() < this.maxEnergy) {
             this.energy += 10;
             this.drawEnergyBar();
         }
@@ -57,7 +60,9 @@ let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft) {
     this.drawEnergyBar = function () {
         this.EnergyPositionX = this.HPPositionX + 30;
         this.EnergyPositionY = this.HPPositionY;
-        ctx.clearRect(this.EnergyPositionX, this.EnergyPositionY, 20, -2.5*(this.energy + 10));
+        ctx.rect(this.EnergyPositionX-1, this.EnergyPositionY+1, 22, -2.5*(this.maxEnergy+0.5));
+        ctx.stroke();
+        ctx.clearRect(this.EnergyPositionX, this.EnergyPositionY, 20, -2.5*this.maxEnergy);
         ctx.fillStyle = 'yellow';
         ctx.fillRect(this.EnergyPositionX, this.EnergyPositionY, 20, -2.5*this.energy);
     }
