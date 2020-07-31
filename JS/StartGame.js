@@ -87,7 +87,7 @@ function startGame() {
     enemy = lapras;
     enemy_bullet_array = lapras_bullet_array;
     enemy.setSourceImage('Image/Lapras_left_move.gif');
-    enemy.setHP(10);
+    enemy.setHP(100);
     enemy.setHPPosition(1260, 580);
 
     createRazz();
