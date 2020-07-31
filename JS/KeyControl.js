@@ -20,23 +20,26 @@ function moveSelectionP1(evt) {
 }
 
 function rightArrowPressed() {
-    gyarados.goRight(20);
+    mainCharacter.goRight(20);
 }
 function leftArrowPressed() {
-    gyarados.goLeft(20);
+    mainCharacter.goLeft(20);
 }
 function upArrowPressed() {
-    gyarados.goUp(20);
+    mainCharacter.goUp(20);
 }
 function downArrowPressed() {
-    gyarados.goDown(20);
+    mainCharacter.goDown(20);
 }
 function pPressed() {
-    gyarados.roar();
-    if (gyarados.getEnergy() > 0) {
-        createBullet();
-        gyarados_bullet_array[gyarados_bullet_array.length-1].shoot();
-        gyarados.decreaseEnergy();
+    mainCharacter.roar();
+    if (mainCharacter.getEnergy() > 0) {
+        if (mainCharacter == gyarados) createBullet();
+        if (mainCharacter == lapras) createLaprasBullet();
+        if (mainCharacter == wartortle) createWartortleBullet();
+        if (mainCharacter == wailord) createWailordBullet();
+        mainCharacter_bullet_array[mainCharacter_bullet_array.length-1].shoot();
+        mainCharacter.decreaseEnergy();
     }
 }
 
@@ -62,23 +65,25 @@ function moveSelectionP2(evt) {
 }
 
 function dPressed() {
-    lapras.goRight(20);
+    enemy.goRight(20);
 }
 function aPressed() {
-    lapras.goLeft(20);
+    enemy.goLeft(20);
 }
 function wPressed() {
-    lapras.goUp(20);
+    enemy.goUp(20);
 }
 function sPressed() {
-    lapras.goDown(20);
+    enemy.goDown(20);
 }
 function hPressed() {
-    lapras.roar();
-    if (lapras.getEnergy() > 0) {
-        createEnemyBullet();
-        lapras_bullet_array[lapras_bullet_array.length-1].shoot();
-        lapras.decreaseEnergy();
-        console.log(lapras.getEnergy())
+    enemy.roar();
+    if (enemy.getEnergy() > 0) {
+        if (enemy == gyarados) createBullet();
+        if (enemy == lapras) createLaprasBullet();
+        if (enemy == wartortle) createWartortleBullet();
+        if (enemy == wailord) createWailordBullet();
+        enemy_bullet_array[enemy_bullet_array.length-1].shoot();
+        enemy.decreaseEnergy();
     }
 }

@@ -28,18 +28,40 @@
     let canvas = document.getElementById('myCanvas');
     let ctx = canvas.getContext('2d');
 
+    let mainCharacter;
+    let enemy;
+    let mainCharacter_bullet_array = [];
+    let enemy_bullet_array = [];
+
     let gyarados = new Character('mainCharacter','Image/Gyarados_right_move.gif','Image/Gyarados_left_move.gif','Image/Gyarados_right_roar.gif','Image/Gyarados_left_roar.gif');
     let gyarados_bullet_array = [];
     let gyarados_bullet_image = new Image();
     function createBullet() {
-        gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Image/Energy_ball_1_right.png','Image/Energy_ball_1_left.png');
+        if (enemy == lapras) gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,lapras,'Image/Energy_ball_1_right.png','Image/Energy_ball_1_left.png');
+        if (enemy == wartortle) gyarados_bullet_array[gyarados_bullet_array.length] = new Bullet(gyarados_bullet_image,gyarados,wartortle,'Image/Energy_ball_1_right.png','Image/Energy_ball_1_left.png');
     }
 
     let lapras = new Character('enemyBoss','Image/Lapras_right_move.gif','Image/Lapras_left_move.gif','Image/Lapras_right_roar.gif','Image/Lapras_left_roar.gif');
     let lapras_bullet_array = [];
     let lapras_bullet_image = new Image();
-    function createEnemyBullet() {
+    function createLaprasBullet() {
         lapras_bullet_array[lapras_bullet_array.length] = new Bullet(lapras_bullet_image,lapras,gyarados,'Image/Ice_ball_1_right.png','Image/Ice_ball_1_left.png');
+    }
+
+    let wartortle = new Character('enemyBoss','Image/Wartortle_right_move.gif','Image/Wartortle_left_move.gif','Image/Wartortle_right_roar.gif','Image/Wartortle_left_roar.gif');
+    let wartortle_bullet_array = [];
+    let wartortle_bullet_image = new Image();
+    function createWartortleBullet() {
+        wartortle_bullet_array[wartortle_bullet_array.length] = new Bullet(wartortle_bullet_image,wartortle,gyarados,'Image/Energy_light_1_right.png','Image/Energy_light_1_left.png');
+        wartortle_bullet_array[wartortle_bullet_array.length-1].setSpeed(50);
+    }
+
+    let wailord = new Character('enemyBoss','Image/Wailord_right_move.gif','Image/Wailord_left_move.gif','Image/Wailord_right_roar.gif','Image/Wailord_left_roar.gif');
+    let wailord_bullet_array = [];
+    let wailord_bullet_image = new Image();
+    function createWailordBullet() {
+        wailord_bullet_array[wailord_bullet_array.length] = new Bullet(wailord_bullet_image,wailord,gyarados,'Image/Energy_ball_2.png','Image/Energy_ball_2.png');
+        wailord_bullet_array[wailord_bullet_array.length-1].setSpeed(15);
     }
 
     let razz_array = [];
@@ -47,6 +69,7 @@
     function createRazz() {
         razz_array[razz_array.length] = new Berry(razz_image, 'Image/Berry_Razz.png');
     }
+
 </script>
 </body>
 </html>

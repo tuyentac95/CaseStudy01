@@ -60,7 +60,7 @@ let Character = function (id,srcGoRight,srcGoLeft,srcRoarRight,srcRoarLeft) {
     this.drawEnergyBar = function () {
         this.EnergyPositionX = this.HPPositionX + 30;
         this.EnergyPositionY = this.HPPositionY;
-        // ctx.rect(this.EnergyPositionX-1, this.EnergyPositionY+1, 22, -2.5*(this.maxEnergy+0.5));
+        // ctx.rect(this.EnergyPositionX-1, this.EnergyPositionY+1, 22, -2.5*(this.maxEnergy+0.75));
         // ctx.stroke();
         ctx.clearRect(this.EnergyPositionX, this.EnergyPositionY, 20, -2.5*this.maxEnergy);
         ctx.fillStyle = 'yellow';

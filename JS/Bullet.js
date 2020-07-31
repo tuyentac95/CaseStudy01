@@ -3,6 +3,11 @@ let Bullet = function(object,shooter,enemy,srcGoRight,srcGoLeft) {
     this.shooter = shooter;
     this.image = object;
     this.enemy = enemy;
+    this.speed = 35;
+
+    this.setSpeed = function (speed) {
+        this.speed = speed;
+    }
 
     this.shoot = function () {
         if (this.shooter.directionX() === 'right') {
@@ -14,7 +19,7 @@ let Bullet = function(object,shooter,enemy,srcGoRight,srcGoLeft) {
                 ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                 let timerId = setInterval(function () {
                     ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
-                    _thisRef.x += 35;
+                    _thisRef.x += _thisRef.speed;
                     if (_thisRef.isHit()) {_thisRef.enemy.decreaseHP();}
                     if ((_thisRef.isHit()) || (_thisRef.x > canvas.width)){
                         ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
@@ -34,7 +39,7 @@ let Bullet = function(object,shooter,enemy,srcGoRight,srcGoLeft) {
                 ctx.drawImage(_thisRef.image, _thisRef.x, _thisRef.y, 84, 58);
                 let timerId = setInterval(function () {
                     ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
-                    _thisRef.x -= 35;
+                    _thisRef.x -= _thisRef.speed;
                     if (_thisRef.isHit()) {_thisRef.enemy.decreaseHP();}
                     if ((_thisRef.isHit()) || (_thisRef.x < 0)) {
                         ctx.clearRect(_thisRef.x, _thisRef.y, 84, 58);
