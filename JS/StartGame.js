@@ -157,7 +157,6 @@ function startGame() {
                 enemy.goLeft(0);
                 enemy.goDown(200 - enemy.getTop());
                 enemy.goUp(enemy.getTop() - 200);
-                enemy.goLeft(0);
                 alert('Are your ready?');
                 startGameLV2();
             }
@@ -200,7 +199,10 @@ function startGameLV2() {
 
     let time = 0;
     let enemyMovement = setInterval(function () {
-        if (time <= 80 && time % 40 == 0) enemyAttack();
+        if (time <= 80 && time % 40 == 0) {
+            enemy.goLeft(0);
+            enemyAttack();
+        }
         if (time >= 100 && time < 160) enemy.goDown(2);
         if (time >= 160 && time <= 240 && time % 40 == 0) enemyAttack();
         if (time >= 260 && time < 320) enemy.goUp(2);
