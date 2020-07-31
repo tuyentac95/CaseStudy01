@@ -157,6 +157,7 @@ function startGame() {
                 enemy.goLeft(0);
                 enemy.goDown(200 - enemy.getTop());
                 enemy.goUp(enemy.getTop() - 200);
+                enemy.goLeft(0);
                 alert('Are your ready?');
                 startGameLV2();
             }
